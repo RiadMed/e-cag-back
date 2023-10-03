@@ -1,0 +1,270 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+	http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="0001-01" author="RBOU">
+        <sql>
+            CREATE SCHEMA admin;
+            CREATE SCHEMA apps;
+        </sql>
+    </changeSet>
+
+    <changeSet id="0001-02" author="RBOU">
+        <createTable tableName="user" schemaName="admin">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="user_pk"/>
+            </column>
+            <column name="username" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(150)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="phone" type="VARCHAR(10)"/>
+            <column name="department" type="VARCHAR(100)"/>
+            <column name="enabled" type="boolean" defaultValue="false"/>
+            <column name="expired" type="boolean" defaultValue="false"/>
+            <column name="credentials" type="boolean" defaultValue="false"/>
+            <column name="locked" type="boolean" defaultValue="true"/>
+        </createTable>
+
+        <createTable tableName="role" schemaName="admin">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="role_pk"/>
+            </column>
+            <column name="label" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+
+        <createTable tableName="user_role" schemaName="admin">
+            <column name="user_id" type="BIGINT">
+                <constraints foreignKeyName="user_role_fk"
+                             references="admin.user(id)" nullable="false"/>
+            </column>
+            <column name="role_id" type="BIGINT">
+                <constraints foreignKeyName="role_user_fk"
+                             references="admin.role(id)" nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="user_id, role_id"
+                       tableName="user_role" schemaName="admin"/>
+
+    </changeSet>
+
+    <changeSet id="0001-03" author="RBOU">
+        <insert schemaName="admin" tableName="user">
+            <column name="username" value="ryadh.boumendjas"/>
+            <column name="password"
+                    value="$2a$10$SRsfjJvc31rErn8PwAYywuFNoX0.hUzxPFpiFtpeJkVfXtjk6WmwK"/>
+            <column name="first_name" value="Mohamed Ryadh"/>
+            <column name="last_name" value="Boumendjas"/>
+            <column name="email" value="ryadh.boumendjas@djezzy.dz"/>
+            <column name="phone" value="0770900238"/>
+            <column name="enabled" value="true"/>
+            <column name="expired" value="false"/>
+            <column name="credentials" value="false"/>
+            <column name="locked" value="true"/>
+
+        </insert>
+        <insert schemaName="admin" tableName="user">
+            <column name="username" value="user"/>
+            <column name="password"
+                    value="$2a$10$SRsfjJvc31rErn8PwAYywuFNoX0.hUzxPFpiFtpeJkVfXtjk6WmwK"/>
+            <column name="first_name" value="User"/>
+            <column name="last_name" value="User"/>
+            <column name="email" value="test@gmail.com"/>
+            <column name="enabled" value="true"/>
+            <column name="expired" value="false"/>
+            <column name="credentials" value="false"/>
+            <column name="locked" value="true"/>
+
+        </insert>
+
+        <!--        <insert tableName="role" schemaName="admin">-->
+        <!--            <column name="label" value="ADMIN"/>-->
+        <!--        </insert>-->
+        <!--        <insert tableName="role" schemaName="admin">-->
+        <!--            <column name="label" value="USER"/>-->
+        <!--        </insert>-->
+
+        <!--        <insert tableName="user_role" schemaName="admin">-->
+        <!--            <column name="user_id" value="1"/>-->
+        <!--            <column name="role_id" value="1"/>-->
+        <!--        </insert>-->
+        <!--        <insert tableName="user_role" schemaName="admin">-->
+        <!--            <column name="user_id" value="1"/>-->
+        <!--            <column name="role_id" value="2"/>-->
+        <!--        </insert>-->
+        <!--        <insert tableName="user_role" schemaName="admin">-->
+        <!--            <column name="user_id" value="2"/>-->
+        <!--            <column name="role_id" value="2"/>-->
+        <!--        </insert>-->
+    </changeSet>
+
+    <changeSet id="0001-04" author="RBOU">
+        <createTable tableName="menu" schemaName="admin">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="menu_pk"/>
+            </column>
+            <column name="label" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="icon" type="VARCHAR(50)"/>
+            <column name="disabled" type="boolean" defaultValue="false"/>
+        </createTable>
+
+        <createTable tableName="role_menu" schemaName="admin">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="menu_user_pk"/>
+            </column>
+            <column name="role_id" type="BIGINT">
+                <constraints foreignKeyName="role_menu_fk"
+                             references="admin.role(id)" nullable="false"/>
+            </column>
+            <column name="menu_id" type="BIGINT">
+                <constraints foreignKeyName="menu_user_fk"
+                             references="admin.menu(id)" nullable="false"/>
+            </column>
+            <column name="create" type="boolean" defaultValue="false"/>
+            <column name="update" type="boolean" defaultValue="false"/>
+            <column name="delete" type="boolean" defaultValue="false"/>
+            <column name="search" type="boolean" defaultValue="false"/>
+            <column name="print" type="boolean" defaultValue="false"/>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="0001-05" author="RBOU">
+        <insert tableName="role" schemaName="admin">
+            <column name="label" value="Administrateur"/>
+        </insert>
+        <insert tableName="role" schemaName="admin">
+            <column name="label" value="Secretaire"/>
+        </insert>
+        <insert tableName="role" schemaName="admin">
+            <column name="label" value="Membre"/>
+        </insert>
+        <insert tableName="role" schemaName="admin">
+            <column name="label" value="Inviter"/>
+        </insert>
+
+    </changeSet>
+
+    <changeSet id="0001-06" author="RBOU">
+        <insert tableName="user_role" schemaName="admin">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="1"/>
+        </insert>
+        <insert tableName="user_role" schemaName="admin">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="2"/>
+        </insert>
+        <insert tableName="user_role" schemaName="admin">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="3"/>
+        </insert>
+        <insert tableName="user_role" schemaName="admin">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="4"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="0001-07" author="RBOU">
+        <insert tableName="role" schemaName="admin">
+            <column name="label" value="Président"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="0001-08" author="RBOU">
+        <addColumn tableName="menu" schemaName="admin">
+            <column name="to" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0001-09" author="RBOU">
+        <addColumn tableName="menu" schemaName="admin">
+            <column name="ordre" type="integer"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0001-10" author="RBOU">
+        <createTable tableName="mail_gabarit" schemaName="admin">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="organisation_type_pk"/>
+            </column>
+            <column name="code" type="VARCHAR(4)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="gabarit" type="VARCHAR(500)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="activer" type="boolean" defaultValue="true"/>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="0001-11" author="RBOU">
+        <addColumn tableName="mail_gabarit" schemaName="admin">
+            <column name="sujet" type="VARCHAR(100)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0001-12" author="RBOU">
+        <createTable tableName="access_token" schemaName="admin">
+            <column name="id_access" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="access_token_pk"/>
+            </column>
+            <column name="expiration_date" type="timestamp without time zone">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints foreignKeyName="user_access_token_fk"
+                             references="admin.user(id)" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="RBOU" id="0001-13">
+        <modifyDataType columnName="id_access"
+                        newDataType="uuid"
+                        schemaName="admin"
+                        tableName="access_token"/>
+    </changeSet>
+
+    <changeSet author="RBOU" id="0001-14">
+        <modifyDataType columnName="gabarit"
+                        newDataType="text"
+                        schemaName="admin"
+                        tableName="mail_gabarit"/>
+    </changeSet>
+
+    <changeSet author="RBOU" id="0001-15">
+        <addColumn tableName="user" schemaName="admin">
+            <column name="new_account" type="boolean" defaultValue="false"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

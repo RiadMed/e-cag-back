@@ -1,0 +1,23 @@
+package dz.gouv.ppas.web.cagapps.tools;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import org.springframework.util.Base64Utils;
+
+import java.io.IOException;
+
+public class BytesDeserializer extends JsonDeserializer<byte[]> {
+
+    @Override
+    public byte[] deserialize(JsonParser jsonparser, DeserializationContext arg1)
+            throws IOException, JsonProcessingException {
+        try {
+            String data = jsonparser.getText();
+            return Base64Utils.decodeFromString(data);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

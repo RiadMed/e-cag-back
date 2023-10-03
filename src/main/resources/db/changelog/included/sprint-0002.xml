@@ -1,0 +1,436 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+	http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="0002-01" author="RBOU">
+        <createTable tableName="organisation_type" schemaName="apps">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="organisation_type_pk"/>
+            </column>
+            <column name="label" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="activer" type="boolean" defaultValue="true"/>
+        </createTable>
+
+        <insert tableName="organisation_type" schemaName="apps">
+            <column name="label" value="EPIC"/>
+        </insert>
+
+        <insert tableName="organisation_type" schemaName="apps">
+            <column name="label" value="EPA"/>
+        </insert>
+
+        <createTable tableName="organisation" schemaName="apps">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="organisation_pk"/>
+            </column>
+            <column name="code" type="VARCHAR(12)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="label" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organisation_type_id" type="BIGINT">
+                <constraints foreignKeyName="organisation_type_fk"
+                             references="apps.organisation_type(id)" nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="phone" type="VARCHAR(10)"/>
+            <column name="adresse" type="VARCHAR(250)"/>
+            <column name="activer" type="boolean" defaultValue="true"/>
+        </createTable>
+
+        <createTable tableName="status" schemaName="apps">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="status_pk"/>
+            </column>
+            <column name="label" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="VARCHAR(150)"/>
+            <column name="disabled" type="boolean" defaultValue="false"/>
+        </createTable>
+
+        <createTable tableName="session_cag" schemaName="apps">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="session_cag_pk"/>
+            </column>
+            <column name="code" type="VARCHAR(12)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="label" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="session_date" type="timestamp without time zone"/>
+            <column name="status_id" type="BIGINT">
+                <constraints foreignKeyName="session_status_fk"
+                             references="apps.status(id)" nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="session_cag_files" schemaName="apps">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="session_cag_files_pk"/>
+            </column>
+            <column name="label" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="session_cag_id" type="BIGINT">
+                <constraints foreignKeyName="session_cag_session_cag_files_fk"
+                             references="apps.session_cag(id)" nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="session_cag_invitation" schemaName="apps">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="session_cag_invitation_pk"/>
+            </column>
+            <column name="membre" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mail" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="session_cag_id" type="BIGINT">
+                <constraints foreignKeyName="session_cag_session_cag_invitation_fk"
+                             references="apps.session_cag(id)" nullable="false"/>
+            </column>
+            <column name="invitation_status" type="boolean" defaultValue="false"/>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="0002-02" author="RBOU">
+        <createTable tableName="organisation_membres" schemaName="apps">
+            <column name="organisation_id" type="SERIAL"/>
+            <column name="membre_usercode" type="VARCHAR(100)"/>
+            <column name="membre_date" type="timestamp without time zone"/>
+            <column name="activer" type="boolean" defaultValue="true"/>
+        </createTable>
+        <addPrimaryKey tableName="organisation_membres" schemaName="apps" columnNames="organisation_id,membre_usercode"
+                       constraintName="organisation_membres_pk_key"/>
+
+        <createTable tableName="code_validation_mfa" schemaName="admin">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="code_validation_mfa_pk"/>
+            </column>
+            <column name="usercode" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code_validation" type="VARCHAR(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date" type="timestamp without time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="numero_seq" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nb_tentative" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="integer">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="0002-03" author="RBOU">
+        <addColumn tableName="session_cag_files" schemaName="apps">
+            <column name="file" type="bytea"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0002-04" author="RBOU">
+        <addColumn tableName="session_cag_files" schemaName="apps">
+            <column name="description" type="VARCHAR(250)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0002-05" author="RBOU">
+        <addColumn tableName="session_cag" schemaName="apps">
+            <column name="organisation_id" type="integer">
+                <constraints foreignKeyName="session_organisation_id_fk"
+                             references="apps.organisation(id)" nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="organisation" schemaName="apps">
+            <column name="logo" type="bytea"/>
+        </addColumn>
+
+        <addColumn tableName="organisation_membres" schemaName="apps">
+            <column name="responsable" type="boolean"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0002-06" author="RBOU">
+        <modifyDataType columnName="logo"
+                        newDataType="VARCHAR(250)"
+                        schemaName="apps"
+                        tableName="organisation"/>
+    </changeSet>
+
+    <changeSet id="0002-07" author="RBOU">
+        <modifyDataType columnName="logo"
+                        newDataType="bytea"
+                        schemaName="apps"
+                        tableName="organisation"/>
+
+        <addColumn tableName="session_cag" schemaName="apps">
+            <column name="adresse" type="VARCHAR(100)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0002-08" author="RBOU">
+        <addColumn tableName="session_cag" schemaName="apps">
+            <column name="annee" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mois" type="integer">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0002-09" author="RBOU">
+        <addColumn tableName="session_cag" schemaName="apps">
+            <column name="type_session" type="integer"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0002-10" author="RBOU">
+        <addColumn tableName="session_cag" schemaName="apps">
+            <column name="creation_date" type="timestamp without time zone"/>
+            <column name="creer_par" type="VARCHAR(100)"/>
+            <column name="pv_date" type="timestamp without time zone"/>
+            <column name="reporter_date" type="timestamp without time zone"/>
+            <column name="reporter_cause" type="VARCHAR(255)"/>
+            <column name="valider_date" type="timestamp without time zone"/>
+            <column name="reserve" type="boolean"/>
+            <column name="valider_avec_reserve_date" type="timestamp without time zone"/>
+        </addColumn>
+        <addColumn tableName="session_cag_invitation" schemaName="apps">
+            <column name="date_invitation" type="timestamp without time zone"/>
+            <column name="note_user" type="VARCHAR(255)"/>
+            <column name="note_user_date" type="timestamp without time zone"/>
+            <column name="present" type="boolean"/>
+            <column name="absence_justifiee" type="boolean"/>
+            <column name="reserve" type="boolean"/>
+            <column name="reserve_note" type="timestamp without time zone"/>
+            <column name="valider_avec_reserve_date" type="timestamp without time zone"/>
+            <column name="valider_date" type="timestamp without time zone"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0002-11" author="RBOU">
+        <createTable tableName="session_cag_notes" schemaName="apps">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="session_cag_notes_pk"/>
+            </column>
+            <column name="usercode" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="session_cag_files_id" type="SERIAL">
+                <constraints foreignKeyName="session_cag_files_id_fk"
+                             references="apps.session_cag_files(id)" nullable="false"/>
+            </column>
+            <column name="notes" type="VARCHAR(255)"/>
+            <column name="notes_date" type="timestamp without time zone"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="0002-12" author="RBOU">
+        <addForeignKeyConstraint baseColumnNames="organisation_id"
+                                 baseTableName="organisation_membres"
+                                 baseTableSchemaName="apps"
+                                 constraintName="fk_organisation_membres_organisation"
+                                 referencedColumnNames="id"
+                                 referencedTableName="organisation"
+                                 referencedTableSchemaName="apps"/>
+    </changeSet>
+
+    <changeSet id="0002-13" author="RBOU">
+        <createTable tableName="session_planification" schemaName="apps">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="session_planification_pk"/>
+            </column>
+            <column name="organisation_id" type="integer">
+                <constraints foreignKeyName="session_organisation_id_fk"
+                             references="apps.organisation(id)" nullable="false"/>
+            </column>
+            <column name="planification_date" type="timestamp without time zone"/>
+            <column name="type" type="integer"/>
+            <column name="valider_par" type="VARCHAR(150)"/>
+            <column name="validation_date" type="timestamp without time zone"/>
+            <column name="creer_par" type="VARCHAR(150)"/>
+            <column name="creation_date" type="timestamp without time zone"/>
+        </createTable>
+
+        <addColumn tableName="organisation" schemaName="apps">
+            <column name="admin_mail" type="VARCHAR(150)"/>
+            <column name="secretaire_mail" type="VARCHAR(150)"/>
+            <column name="responsable_mail" type="VARCHAR(150)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="RBOU" id="0002-14">
+        <modifyDataType columnName="code"
+                        newDataType="VARCHAR(25)"
+                        schemaName="apps"
+                        tableName="session_cag"/>
+    </changeSet>
+
+    <changeSet author="RBOU" id="0002-15">
+        <addColumn tableName="status" schemaName="apps">
+            <column name="color" type="VARCHAR(30)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="RBOU" id="0002-16">
+        <createTable tableName="session_status" schemaName="apps">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="session_status_pk"/>
+            </column>
+            <column name="session_cag_id" type="BIGINT">
+                <constraints foreignKeyName="session_cag_status_fk"
+                             references="apps.session_cag(id)" nullable="false"/>
+            </column>
+            <column name="status_id" type="BIGINT">
+                <constraints foreignKeyName="status_session_cag_fk"
+                             references="apps.status(id)" nullable="false"/>
+            </column>
+            <column name="date" type="timestamp without time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints foreignKeyName="user_status_fk"
+                             references="admin.user(id)" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="RBOU" id="0002-17">
+        <addColumn tableName="session_cag" schemaName="apps">
+            <column name="changement_status_date" type="timestamp without time zone"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="RBOU" id="0002-18">
+        <dropUniqueConstraint schemaName="apps"
+                              constraintName="session_cag_code_key"
+                              tableName="session_cag"
+                              uniqueColumns="code"/>
+    </changeSet>
+
+    <changeSet author="RBOU" id="0002-19">
+        <sql>
+            ALTER TABLE apps.session_cag_invitation DROP COLUMN note_user;
+            ALTER TABLE apps.session_cag_invitation DROP COLUMN note_user_date;
+            ALTER TABLE apps.session_cag_invitation DROP COLUMN reserve;
+            ALTER TABLE apps.session_cag_invitation DROP COLUMN reserve_note;
+            ALTER TABLE apps.session_cag_invitation DROP COLUMN valider_avec_reserve_date;
+            ALTER TABLE apps.session_cag_invitation DROP COLUMN valider_date;
+        </sql>
+    </changeSet>
+
+    <changeSet id="0002-20" author="RBOU">
+        <addColumn tableName="session_cag_invitation" schemaName="apps">
+            <column name="invitation_status_date" type="timestamp without time zone"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0002-21" author="RBOU">
+        <createTable tableName="session_files_notes" schemaName="apps">
+            <column name="session_cag_files_id" type="SERIAL">
+                <constraints foreignKeyName="session_cag_files_note_fk"
+                             references="apps.session_cag_files(id)" nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(50)"/>
+            <column name="note" type="text"/>
+        </createTable>
+        <addPrimaryKey tableName="session_files_notes" schemaName="apps"
+                       columnNames="session_cag_files_id,username"
+                       constraintName="session_files_notes_pk_key"/>
+    </changeSet>
+
+    <changeSet author="RBOU" id="0002-22">
+        <modifyDataType columnName="file"
+                        newDataType="VARCHAR(200)"
+                        schemaName="apps"
+                        tableName="session_cag_files"/>
+    </changeSet>
+
+    <changeSet author="RBOU" id="0002-23">
+        <modifyDataType columnName="file"
+                        newDataType="BYTEA"
+                        schemaName="apps"
+                        tableName="session_cag_files"/>
+    </changeSet>
+
+    <changeSet author="RBOU" id="0002-24">
+        <sql>ALTER TABLE apps.session_cag_files DROP COLUMN file;</sql>
+    </changeSet>
+
+    <changeSet id="0002-25" author="RBOU">
+        <addColumn tableName="session_cag_files" schemaName="apps">
+            <column name="file_path" type="VARCHAR(255)"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="RBOU" id="0002-26">
+        <createTable tableName="session_resolutions" schemaName="apps">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" nullable="false"
+                             primaryKeyName="session_resolutions_pk"/>
+            </column>
+            <column name="session_cag_id" type="BIGINT">
+                <constraints foreignKeyName="session_cag_session_resolutions_fk"
+                             references="apps.session_cag(id)" nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="date_creation" type="timestamp without time zone"/>
+            <column name="status" type="integer"/>
+            <column name="change_date" type="timestamp without time zone"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="RBOU" id="0002-27">
+        <addColumn tableName="session_cag" schemaName="apps">
+            <column name="file_path" type="VARCHAR(255)"></column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="RBOU" id="0002-28">
+        <addColumn tableName="session_cag" schemaName="apps">
+            <column name="pv_ajouter_par" type="VARCHAR(255)"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="RBOU" id="0002-29">
+        <modifyDataType columnName="status"
+                        newDataType="boolean"
+                        schemaName="apps"
+                        tableName="session_resolutions"/>
+
+        <addDefaultValue columnName="status"
+                         defaultValueBoolean="false"
+                         schemaName="apps"
+                         tableName="session_resolutions"/>
+    </changeSet>
+
+</databaseChangeLog>
