@@ -100,7 +100,7 @@ public class MailServiceIMPL implements MailService {
 
     private MimeMessageHelper getMessageHelpers(MimeMessage message, MailRequest mailRequest) throws MessagingException, UnsupportedEncodingException {
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
-        helper.setFrom("noreply@e-cag.dz", mailRequest.getMailSubject());
+        helper.setFrom("ne_pas_repondre@e-cag.dz", mailRequest.getMailSubject());
         helper.setSubject(mailRequest.getMailSubject());
         helper.setTo(mailRequest.getMails());
         if (mailRequest.getCc() != null) {
