@@ -4,6 +4,7 @@ import dz.gouv.ppas.web.cagapps.business.data.dto.apps.SessionCAGDto;
 import dz.gouv.ppas.web.cagapps.business.data.dto.apps.SessionCAGInvitationDto;
 import dz.gouv.ppas.web.cagapps.business.data.dto.request.EntityResponse;
 import dz.gouv.ppas.web.cagapps.business.data.dto.request.NotificationResponse;
+import dz.gouv.ppas.web.cagapps.business.data.dto.statistic.InvitationStatistic;
 import dz.gouv.ppas.web.cagapps.business.data.entities.apps.SessionCAGInvitation;
 import dz.gouv.ppas.web.cagapps.business.services.SessionCAGInvitationServices;
 import dz.gouv.ppas.web.cagapps.tools.StaticData;
@@ -62,5 +63,12 @@ public class SessionCAGInvitationController extends GenericRestController<Sessio
         return sessionCAGInvitationServices.checkAbsenceAll(sessionCAGDto);
     }
 
+
+    @GetMapping(
+            params = {"orgId"}
+    )
+    public InvitationStatistic checkInvitations(@RequestParam("orgId") Integer organisationId) {
+        return sessionCAGInvitationServices.checkInvitations(organisationId);
+    }
 
 }

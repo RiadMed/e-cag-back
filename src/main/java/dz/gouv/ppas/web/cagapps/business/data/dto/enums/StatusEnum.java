@@ -12,6 +12,7 @@ public enum StatusEnum {
     INVITATION_SEND("Invitation Envoyés"),
     METTING_STARTED("Réunion Démarrer"),
     PV_FILE_ADD("PV Ajouter"),
+    PV_VALIDER("PV Validé"),
     PLANIFIER("Planifier");
 
     private String name = "";

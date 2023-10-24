@@ -1,6 +1,8 @@
 package dz.gouv.ppas.web.cagapps.web;
 
 import dz.gouv.ppas.web.cagapps.business.data.dto.apps.SessionResolutionsDto;
+import dz.gouv.ppas.web.cagapps.business.data.dto.statistic.InvitationStatistic;
+import dz.gouv.ppas.web.cagapps.business.data.dto.statistic.ResolutionStatistic;
 import dz.gouv.ppas.web.cagapps.business.data.entities.apps.SessionResolutions;
 import dz.gouv.ppas.web.cagapps.business.services.SessionResolutionsService;
 import dz.gouv.ppas.web.cagapps.tools.StaticData;
@@ -29,4 +31,12 @@ public class SessionResolutionsController extends GenericRestController<SessionR
         entity.setDateCreation(LocalDateTime.now());
         return super.create(entity);
     }
+
+    @GetMapping(
+            params = {"orgId"}
+    )
+    public ResolutionStatistic checkResolutions(@RequestParam("orgId") Integer organisationId) {
+        return sessionResolutionsService.checkResolutions(organisationId);
+    }
+
 }

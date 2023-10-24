@@ -13,4 +13,8 @@ public interface SessionResolutionsDao extends JpaRepository<SessionResolutions,
 
     @Query("select res from SessionResolutions res where res.sessionCAG.id = :sessionId")
     List<SessionResolutions> getSessionCagResultions(@Param("sessionId") Long sessionId);
+
+    @Query("select res from SessionResolutions res where res.sessionCAG.organisation.id = :orgId and res.sessionCAG.status.label not in :status")
+    List<SessionResolutions> getResolutionByOrgId(@Param("orgId") Integer orgId, @Param("status") List<String> status);
+
 }

@@ -1,6 +1,12 @@
 package dz.gouv.ppas.web.cagapps.tools;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import dz.gouv.ppas.web.cagapps.business.data.entities.admin.User;
+import dz.gouv.ppas.web.cagapps.business.reporting.model.ReportDto;
 import dz.gouv.ppas.web.cagapps.exceptions.ECagException;
 import io.jsonwebtoken.impl.DefaultClock;
 import org.apache.commons.io.IOUtils;
@@ -12,7 +18,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -74,8 +80,25 @@ public class AppsUtils {
         return new ArrayList<>();
     }
 
-    public static String generateRandomPassword(int len, int randNumOrigin, int randNumBound)
-    {
+    public static InputStream geQrCode(ReportDto report) throws WriterException, IOException {
+        return AppsUtils.writeImage("png", AppsUtils.generateMatrix(report.getQrCode(), 400));
+    }
+
+
+    public static BitMatrix generateMatrix(String data, int size) throws WriterException {
+        BitMatrix bitMatrix = new QRCodeWriter().encode(data, BarcodeFormat.QR_CODE, size, size);
+        return bitMatrix;
+    }
+
+    public static InputStream writeImage(String imageFormat, BitMatrix bitMatrix) throws FileNotFoundException, IOException {
+        ByteArrayOutputStream fileOutputStream = new ByteArrayOutputStream();
+        MatrixToImageWriter.writeToStream(bitMatrix, imageFormat, fileOutputStream);
+        fileOutputStream.close();
+        InputStream qrCode = new ByteArrayInputStream(fileOutputStream.toByteArray());
+        return qrCode;
+    }
+
+    public static String generateRandomPassword(int len, int randNumOrigin, int randNumBound) {
         SecureRandom random = new SecureRandom();
         return random.ints(randNumOrigin, randNumBound + 1)
                 .filter(i -> Character.isAlphabetic(i) || Character.isDigit(i))
@@ -100,6 +123,12 @@ public class AppsUtils {
             throw new ECagException(e.getMessage());
         }
         return resource;
+    }
+
+    public static boolean nullCheck(Object field) {
+        if (field == null || (field instanceof String && ((String) field).isEmpty()))
+            return true;
+        return false;
     }
 
 

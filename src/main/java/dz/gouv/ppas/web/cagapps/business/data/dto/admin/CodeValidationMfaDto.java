@@ -16,9 +16,13 @@ public class CodeValidationMfaDto implements Serializable {
 
     private Long id;
     private String usercode;
-    private String code_validation;
+    private String codeValidation;
     private LocalDateTime date;
     private Integer numeroSeq;
     private Integer nbTentative;
     private Integer status;
+
+    public CodeValidationMfaDto(Integer nbTentative) {
+        this.nbTentative = nbTentative;
+    }
 }

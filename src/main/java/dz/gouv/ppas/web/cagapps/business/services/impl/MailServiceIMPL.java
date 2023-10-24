@@ -98,6 +98,16 @@ public class MailServiceIMPL implements MailService {
         return sendMail(mailRequest);
     }
 
+    @Override
+    public MailResponse<String> sendCodeDeValidation(MailRequest mailRequest, String codeValidation) {
+        MailGabaritDto gabarit = getGabait(GabaritEnum.C005.toString());
+        String gabaritText = MessageFormat.format(gabarit.getGabarit(), codeValidation);
+        String mailTemplate = getMailTemplate(gabaritText);
+        mailRequest.setMailDescription(mailTemplate);
+        mailRequest.setMailSubject(gabarit.getSujet());
+        return sendMail(mailRequest);
+    }
+
     private MimeMessageHelper getMessageHelpers(MimeMessage message, MailRequest mailRequest) throws MessagingException, UnsupportedEncodingException {
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setFrom("ne_pas_repondre@e-cag.dz", mailRequest.getMailSubject());

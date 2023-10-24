@@ -21,4 +21,6 @@ public interface MailService {
     MailResponse<String> sendMailInvitations(MailRequest mailRequest, OrganisationDto organisation, String date, String adresse);
 
     MailResponse<String> sendMotDePasseTemporaire(MailRequest mailRequest, String username, String password);
+
+    MailResponse<String> sendCodeDeValidation(MailRequest mailRequest, String codeValidation);
 }

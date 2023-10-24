@@ -34,4 +34,14 @@ public class EntityResponse<T> implements Serializable {
         this.body = null;
         this.message = message;
     }
+
+    public EntityResponse(T body, boolean success, String message) {
+        this.body = body;
+        this.success = success;
+        this.message = message;
+    }
+
+    public EntityResponse() {
+        body = null;
+    }
 }

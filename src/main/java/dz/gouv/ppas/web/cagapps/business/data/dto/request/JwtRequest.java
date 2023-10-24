@@ -13,10 +13,12 @@ public class JwtRequest implements Serializable {
 
     private String username;
     private String password;
+    private String tokenReCaptcha;
 
-    public JwtRequest(String username, String password) {
+    public JwtRequest(String username, String password, String tokenReCaptcha) {
         this.setUsername(username);
         this.setPassword(password);
+        this.setTokenReCaptcha(tokenReCaptcha);
     }
 
 }

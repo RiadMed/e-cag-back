@@ -32,7 +32,7 @@ public class CodeValidationMfa implements Serializable {
     @NotNull
     @Size(max = 6)
     @Column(name = "code_validation", unique = true)
-    private String code_validation;
+    private String codeValidation;
 
     @NotNull
     @Column(name = "date")

@@ -5,6 +5,7 @@ import dz.gouv.ppas.web.cagapps.business.data.dto.apps.*;
 import dz.gouv.ppas.web.cagapps.business.data.dto.enums.StatusEnum;
 import dz.gouv.ppas.web.cagapps.business.data.dto.request.EntityResponse;
 import dz.gouv.ppas.web.cagapps.business.data.dto.request.MailRequest;
+import dz.gouv.ppas.web.cagapps.business.data.dto.statistic.InvitationStatistic;
 import dz.gouv.ppas.web.cagapps.business.data.entities.apps.SessionCAGInvitation;
 import dz.gouv.ppas.web.cagapps.business.repositories.SessionCAGInvitationDao;
 import dz.gouv.ppas.web.cagapps.business.services.*;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -140,6 +142,14 @@ public class SessionCAGInvitationServicesIMPL extends GenericServiceImpl<Session
             setPresence(x);
         });
         return sessionCAGDto.getInvitationsList();
+    }
+
+    @Override
+    public InvitationStatistic checkInvitations(Integer organisationId) {
+        List<String> listStatus = Arrays.asList(StatusEnum.PLANIFIER.toString(), StatusEnum.ANNULER.toString(), StatusEnum.PV_VALIDER.toString());
+        List<SessionCAGInvitationDto> list = mapToDto(sessionCAGInvitationDao.findByOrgIdAndStatus(organisationId, listStatus));
+        int lu = list.stream().filter(x -> x.getInvitationStatus()).collect(Collectors.toList()).size();
+        return new InvitationStatistic(lu, list.size() - lu);
     }
 
     private SessionCAGInvitationDto setPresence(SessionCAGInvitationDto sessionCAGInvitationDto) {
